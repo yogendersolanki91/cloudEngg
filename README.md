@@ -1,8 +1,8 @@
-Enginnering a Cloud
+Engineering a Cloud
 ===================
 
 
-This is the an attempt to build higly fulte-tolerance key value store based on RAFT conseuse algorithm .
+This is the an attempt to build highly fault-tolerance key value store based on Raft Consensus Algorithm.
 It is implemented using Google Go language and ZeroMq.
 
 
