@@ -8,6 +8,12 @@ import (
 	"path/filepath"
 )
 
+type Raft struct {
+	currentTerm int;
+	votedFor int
+
+}
+
 type timeouts struct {
 	ID             int `json:"ID"`
 	ElctionTimeout int `json:"ElctionTimeout"`

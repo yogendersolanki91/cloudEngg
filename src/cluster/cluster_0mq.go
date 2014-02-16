@@ -2,15 +2,59 @@ package cluster
 
 import (
 	"encoding/json"
-	"fmt"
 	zmq4 "github.com/pebbe/zmq4"
 	"io/ioutil"
 	"os"
 	"strconv"
-
-//	"io"
-
+	"encoding/xml"
+	"strings"
 )
+
+//some of the New Structure is beging added that should be used by all the server and every New struvutre should be defined here
+type VoteReq struct {
+	Term int;
+	IdCandidate int;
+
+}
+type VoteRespose struct {
+	term int
+	voteResult bool
+
+}
+type HeartBeat struct {
+	term int;
+	leaderId int;
+
+}
+//dECLARING how would look like final msg so that it can be decoded and encoded propery
+type sendVoteReq struct {
+	Pid   int
+	MsgId int
+	Msg   VoteReq
+}
+type sendString struct {
+	Pid   int
+	MsgId int
+	Msg   string
+}
+type sendint struct {
+	Pid   int
+	MsgId int
+	Msg   int
+}
+type sendVoteRespons struct {
+	Pid   int
+	MsgId int
+	Msg   VoteRespose
+}
+type sendHeartBeat struct {
+	Pid   int
+	MsgId int
+	Msg   HeartBeat
+}
+
+
+
 
 //to store info written in JSon config File
 type ServerConf struct {
@@ -47,7 +91,7 @@ type Envelope struct {
 	Msg   interface{}
 }
 
-func (b Envelope) String() string {
+/*func (b Envelope) String() string {
 
 	return fmt.Sprintf("%b", b)
 }
@@ -55,7 +99,7 @@ func (b Envelope) OtherString() string {
 
 	return fmt.Sprintf("%b", b.Msg)
 }
-
+*/
 //basic Function that will be accessed by the server object
 type Server interface {
 	Pid() int
@@ -101,29 +145,100 @@ func getAllserver(cofg string) Allserver {
 	return jsontype
 }
 
+
 // to send the envelope over the network we need string this will provide formatted string fro json encoding ans decoding of the message
+var SendINT,RCVINT sendint;
+var SndHB,RCBHB sendHeartBeat;
+var SendVOteRes,RCVTRS sendVoteRespons;
+var Sendthis,RCVVTREQ sendVoteReq;
+var SendString,RCVSTR sendString;
 func wrapMsg(msg Envelope) string {
+
 	var send string
 	switch msg.Msg.(type) {
+	case HeartBeat:
+		SndHB.Msg=msg.Msg.(HeartBeat);
+		SndHB.MsgId=msg.MsgId;
+		SndHB.Pid=msg.Pid;
+		x,_:=xml.Marshal(SndHB);
+		send=string(x);
+		return send;
+	case VoteRespose:
+		SendVOteRes.Msg=msg.Msg.(VoteRespose);
+		SendVOteRes.MsgId=msg.MsgId;
+		SendVOteRes.Pid=msg.Pid;
+		x,_:=xml.Marshal(SendVOteRes);
+		send=string(x);
+		return send;
+	case VoteReq:
+		Sendthis.Msg=msg.Msg.(VoteReq);
+		Sendthis.MsgId=msg.MsgId;
+		Sendthis.Pid=msg.Pid;
+		x,_:=xml.Marshal(Sendthis);
+		send=string(x);
+		return send;
 	case string:
-		send = "{\"Pid\":" + strconv.Itoa(msg.Pid) + ",\"MsgId\":" + strconv.Itoa(msg.MsgId) + ",\"Msg\":\"" + msg.Msg.(string) + "\"}"
+		SendString.Msg=msg.Msg.(string);
+		SendString.MsgId=msg.MsgId;
+		SendString.Pid=msg.Pid;
+		x,_:=xml.Marshal(SendString);
+		send=string(x);
+		return send;
 	case int:
-		send = "{\"Pid\":" + strconv.Itoa(msg.Pid) + ",\"MsgId\":" + strconv.Itoa(msg.MsgId) + ",\"Msg\":\"" + strconv.Itoa(msg.Msg.(int)) + "\"}"
-	default:
-		send = "{\"Pid\":" + strconv.Itoa(msg.Pid) + ",\"MsgId\":" + strconv.Itoa(msg.MsgId) + ",\"Msg\":\"" + msg.OtherString() + "\"}"
-	}
-	return send
-}
 
+		SendINT.Msg=msg.Msg.(int);
+		SendINT.MsgId=msg.MsgId;
+		SendINT.Pid=msg.Pid;
+		x,_:=xml.Marshal(SendINT);
+		send=string(x);
+		return send;
+
+	}
+	return send;
+}
 // this will decode msg back to Envelope structure from the json encode msg
 func unwrapMs(msg string) Envelope {
-	var toretun Envelope
-	json.Unmarshal([]byte(msg), &toretun)
-	return toretun
+	var	returnEnvelp Envelope;
+	binmsg:=[]byte(msg)
+	switch {
+	case strings.Contains(msg,"<sendVoteRespons>"):
+		xml.Unmarshal(binmsg,&RCVTRS)
+		returnEnvelp.MsgId=RCVTRS.MsgId;
+		returnEnvelp.Pid=RCVTRS.Pid;
+		returnEnvelp.Msg=RCVTRS.Msg;
+		return returnEnvelp;
+	case strings.Contains(msg,"<sendint>"):
+		xml.Unmarshal(binmsg,&RCVINT)
+		returnEnvelp.MsgId=RCVINT.MsgId;
+		returnEnvelp.Pid=RCVINT.Pid;
+		returnEnvelp.Msg=RCVINT.Msg;
+	case strings.Contains(msg,"<sendHeartBeat>"):
+		xml.Unmarshal(binmsg,&RCBHB)
+		returnEnvelp.MsgId=RCBHB.MsgId;
+		returnEnvelp.Pid=RCBHB.Pid;
+		returnEnvelp.Msg=RCBHB.Msg;
+		return returnEnvelp;
+	case strings.Contains(msg,"<sendVoteReq>"):
+		xml.Unmarshal(binmsg,&RCVVTREQ)
+		returnEnvelp.MsgId=RCVVTREQ.MsgId;
+		returnEnvelp.Pid=RCVVTREQ.Pid;
+		returnEnvelp.Msg=RCVVTREQ.Msg;
+		return returnEnvelp;
+	case strings.Contains(msg,"<sendString>"):
+		xml.Unmarshal(binmsg,&RCVSTR)
+		returnEnvelp.MsgId=RCVSTR.MsgId;
+		returnEnvelp.Pid=RCVSTR.Pid;
+		returnEnvelp.Msg=RCVSTR.Msg;
+		return returnEnvelp;
+	}
+	return returnEnvelp;
+
 }
 
 //here is the all stuff that required to create a server object
 func New(id int, cofg string) ServerObj {
+	//Registering All Structure that we will use
+
 	//getting info abut all server that is available
 	global_object := getAllserver(cofg)
 	var newServer ServerObj

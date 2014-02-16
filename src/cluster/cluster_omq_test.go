@@ -10,6 +10,8 @@ import (
 	//"sync/atomic"
 	//"go/printer"
 //	"fmt"
+//	"fmt"
+	"fmt"
 )
 
 type Person struct {
@@ -79,7 +81,7 @@ func rcvnplus() {
 func brdcstprepare(myserver *ServerObj) {
 
 	for l := 1; l <= totalbrodcastmsg; l++ {
-		myserver.Outbox() <- &Envelope{Pid: -1, MsgId: l, Msg: "chk msg"}
+		myserver.Outbox() <- &Envelope{Pid: -1, MsgId: l, Msg:"dfd"}
 		brdsnplus(len(myserver.Peers_o))
 	}
 
@@ -88,17 +90,29 @@ func brdcstprepare(myserver *ServerObj) {
 }
 
 func sendprepare(myserver *ServerObj) {
+	var sendreq VoteReq;
+	var sendRes VoteRespose;
+	var sendHB HeartBeat
+	sendHB.leaderId=34;
+	sendHB.term=9;
+	sendreq.IdCandidate=90;
+	sendreq.Term=33;
+	sendRes.voteResult=true;
+	sendRes.term=33;
 	for k := 1; k <= 10; k++ {
 		if myserver.ID != k {
 			for l := 1; l <= 1000; l++ {
-				switch l % 3 {
+				switch l % 5 {
 				case 0:
 					myserver.Outbox() <- &Envelope{Pid: k, MsgId: l, Msg: "chk msg"}
 				case 1:
 					myserver.Outbox() <- &Envelope{Pid: k, MsgId: l, Msg: 2905}
 				case 2:
-					person := &Person{"shah rukh", 48}
-					myserver.Outbox() <- &Envelope{Pid: k, MsgId: l, Msg: person}
+					myserver.Outbox() <- &Envelope{Pid: k, MsgId: l, Msg: sendreq}
+				case 3:
+					myserver.Outbox() <- &Envelope{Pid: k, MsgId: l, Msg: sendRes}
+				case 4:
+					myserver.Outbox() <- &Envelope{Pid: k, MsgId: l, Msg: sendHB}
 				}
 				sendplus()
 			}
@@ -112,7 +126,29 @@ func recvprepar(myserver *ServerObj) {
 
 	for {
 		select {
-		case <-myserver.Inbox():
+		case x:=<-myserver.Inbox():
+			var msg Envelope;
+			msg=*x;
+
+			switch msg.Msg.(type){
+			case VoteReq:
+				fmt.Print("Req ")
+				fmt.Println(msg)
+			case VoteRespose:
+				fmt.Print("Respns ")
+				fmt.Println(msg)
+			case int:
+				fmt.Print("intger ")
+				fmt.Println(msg)
+			case string:
+				fmt.Print("string ")
+				fmt.Println(msg)
+			case HeartBeat:
+				fmt.Print("HearBeat ")
+				fmt.Println(msg)
+			}
+
+			//fmt.Println(msg.Msg);
 			rcvnplus()
 
 		case <-time.After(10 * time.Second):
