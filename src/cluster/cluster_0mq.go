@@ -299,8 +299,8 @@ func New(id int, cofg string) ServerObj {
 			var msg Envelope
 			msg = unwrapMs(rcvmsg)
 
-				//print("aaya ")
-				//println(newServer.ID)
+			//print("aaya ")
+			//println(newServer.ID)
 			newServer.Inbox() <- &msg
 
 		}
