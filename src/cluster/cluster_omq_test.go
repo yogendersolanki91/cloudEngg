@@ -9,8 +9,8 @@ import (
 	//"reflect"
 	//"sync/atomic"
 	//"go/printer"
-//	"fmt"
-//	"fmt"
+	//	"fmt"
+	//	"fmt"
 	"fmt"
 )
 
@@ -26,7 +26,7 @@ var brdsnd = 0
 var totalbrodcastmsg = 100
 
 func TestServerSendRcvBrodcast(t *testing.T) {
-	cofigpath, _ := filepath.Abs("../config.json")
+	cofigpath, _ := filepath.Abs("/home/blackh/IdeaProjects/untitled/src/raftconfig.json")
 	var allserver [11]ServerObj
 	for i := 1; i <= 10; i++ {
 		allserver[i] = New(i, cofigpath)
@@ -81,7 +81,7 @@ func rcvnplus() {
 func brdcstprepare(myserver *ServerObj) {
 
 	for l := 1; l <= totalbrodcastmsg; l++ {
-		myserver.Outbox() <- &Envelope{Pid: -1, MsgId: l, Msg:"dfd"}
+		myserver.Outbox() <- &Envelope{Pid: -1, MsgId: l, Msg: "dfd"}
 		brdsnplus(len(myserver.Peers_o))
 	}
 
@@ -90,15 +90,16 @@ func brdcstprepare(myserver *ServerObj) {
 }
 
 func sendprepare(myserver *ServerObj) {
-	var sendreq VoteReq;
-	var sendRes VoteRespose;
+	var sendreq VoteReq
+	var sendRes VoteRespose
 	var sendHB HeartBeat
-	sendHB.leaderId=34;
-	sendHB.term=9;
-	sendreq.IdCandidate=90;
-	sendreq.Term=33;
-	sendRes.voteResult=true;
-	sendRes.term=33;
+	sendHB.LeaderId = 34
+	sendHB.Term = 9
+	sendreq.IdCandidate = 90
+	sendreq.Term = 33
+	sendRes.VoteResult = true
+	sendRes.Term = 33
+
 	for k := 1; k <= 10; k++ {
 		if myserver.ID != k {
 			for l := 1; l <= 1000; l++ {
@@ -126,11 +127,11 @@ func recvprepar(myserver *ServerObj) {
 
 	for {
 		select {
-		case x:=<-myserver.Inbox():
-			var msg Envelope;
-			msg=*x;
+		case x := <-myserver.Inbox():
+			var msg Envelope
+			msg = *x
 
-			switch msg.Msg.(type){
+			switch msg.Msg.(type) {
 			case VoteReq:
 				fmt.Print("Req ")
 				fmt.Println(msg)

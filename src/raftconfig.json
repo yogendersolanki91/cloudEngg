@@ -8,18 +8,18 @@
     {"ID":6,"Host":"localhost","Port":290006},
     {"ID":7,"Host":"localhost","Port":290007},
     {"ID":8,"Host":"localhost","Port":290008},
-    {"ID":9,"Host":"localhost","Port":290007},
+    {"ID":9,"Host":"localhost","Port":290009},
     {"ID":10,"Host":"localhost","Port":2900010}
 ],"Timeouts":[
-    {"ID":1,"ElctionTimeout":300,"HeartBeat":150},
-    {"ID":2,"ElctionTimeout":210,"HeartBeat":170},
-    {"ID":3,"ElctionTimeout":220,"HeartBeat":200},
-    {"ID":4,"ElctionTimeout":230,"HeartBeat":250},
-    {"ID":5,"ElctionTimeout":240,"HeartBeat":270},
-    {"ID":6,"ElctionTimeout":250,"HeartBeat":230},
-    {"ID":7,"ElctionTimeout":260,"HeartBeat":190},
-    {"ID":8,"ElctionTimeout":270,"HeartBeat":210},
-    {"ID":9,"ElctionTimeout":290,"HeartBeat":240},
-    {"ID":10,"ElctionTimeout":320,"HeartBeat":220}
+    {"ID":1,"ElctionTimeout":570},
+    {"ID":2,"ElctionTimeout":560},
+    {"ID":3,"ElctionTimeout":490},
+    {"ID":4,"ElctionTimeout":440},
+    {"ID":5,"ElctionTimeout":270},
+    {"ID":6,"ElctionTimeout":270},
+    {"ID":7,"ElctionTimeout":480},
+    {"ID":8,"ElctionTimeout":690},
+    {"ID":9,"ElctionTimeout":500},
+    {"ID":10,"ElctionTimeout":630}
 ],"LogFile":"logtest.log"
 }

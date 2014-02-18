@@ -20,35 +20,34 @@
 	"buffers":
 	[
 		{
-			"file": "/home/blackh/Documents/Cloud COmputing Resources and WOrk/raftserverenetity.go",
+			"file": "/home/blackh/IdeaProjects/untitled/src/raftconfig.json",
 			"settings":
 			{
-				"buffer_size": 36571,
-				"line_ending": "Unix",
-				"name": "package raft"
-			}
-		},
-		{
-			"file": "/media/sda5/Movies/sqlmapproject-sqlmap-b4139f5/output/www.jainbookdepot.com/target.txt",
-			"settings":
-			{
-				"buffer_size": 66,
+				"buffer_size": 877,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/home/blackh/Documents/MobileComputing/analysis/all_tran_coun.plot",
+			"file": "/home/blackh/Music/target.sh",
 			"settings":
 			{
-				"buffer_size": 454,
+				"buffer_size": 1009,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/home/blackh/Downloads/idea-IC-133.331/bin/idea.sh",
+			"file": "/home/blackh/IdeaProjects/untitled/src/x.txt",
 			"settings":
 			{
-				"buffer_size": 5521,
+				"buffer_size": 0,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/blackh/IdeaProjects/untitled/src/config.json",
+			"settings":
+			{
+				"buffer_size": 491,
 				"line_ending": "Unix"
 			}
 		}
@@ -81,6 +80,10 @@
 	},
 	"file_history":
 	[
+		"/home/blackh/Downloads/idea-IC-133.331/bin/idea.sh",
+		"/home/blackh/Documents/MobileComputing/analysis/all_tran_coun.plot",
+		"/home/blackh/Documents/Cloud COmputing Resources and WOrk/raftserverenetity.go",
+		"/home/blackh/Music/target.sh",
 		"/home/blackh/Desktop/IDEA IDE",
 		"/home/blackh/.config/sublime-text-2/Packages/GoSublime/CHANGELOG.md",
 		"/var/www/info.php",
@@ -120,6 +123,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"alex",
+			"wget",
 			"com"
 		],
 		"highlight": true,
@@ -128,6 +133,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"axel",
+			"alex -n 10 -s 5242880 "
 		],
 		"reverse": false,
 		"show_context": true,
@@ -138,43 +145,15 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/home/blackh/Documents/Cloud COmputing Resources and WOrk/raftserverenetity.go",
+					"file": "/home/blackh/IdeaProjects/untitled/src/raftconfig.json",
 					"settings":
 					{
-						"buffer_size": 36571,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								36571,
-								36571
-							]
-						],
-						"settings":
-						{
-							"auto_name": "package raft",
-							"syntax": "Packages/GoSublime/syntax/GoSublime-Go.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 24444.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "/media/sda5/Movies/sqlmapproject-sqlmap-b4139f5/output/www.jainbookdepot.com/target.txt",
-					"settings":
-					{
-						"buffer_size": 66,
+						"buffer_size": 877,
 						"regions":
 						{
 						},
@@ -187,7 +166,35 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/home/blackh/Music/target.sh",
+					"settings":
+					{
+						"buffer_size": 1009,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								137,
+								137
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -197,18 +204,18 @@
 				},
 				{
 					"buffer": 2,
-					"file": "/home/blackh/Documents/MobileComputing/analysis/all_tran_coun.plot",
+					"file": "/home/blackh/IdeaProjects/untitled/src/x.txt",
 					"settings":
 					{
-						"buffer_size": 454,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								78,
-								78
+								0,
+								0
 							]
 						],
 						"settings":
@@ -223,10 +230,10 @@
 				},
 				{
 					"buffer": 3,
-					"file": "/home/blackh/Downloads/idea-IC-133.331/bin/idea.sh",
+					"file": "/home/blackh/IdeaProjects/untitled/src/config.json",
 					"settings":
 					{
-						"buffer_size": 5521,
+						"buffer_size": 491,
 						"regions":
 						{
 						},
@@ -239,8 +246,8 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage",
-							"tab_size": 2,
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
@@ -289,7 +296,7 @@
 	},
 	"replace":
 	{
-		"height": 0.0
+		"height": 64.0
 	},
 	"save_all_on_build": true,
 	"select_file":
