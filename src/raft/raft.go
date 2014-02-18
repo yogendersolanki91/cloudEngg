@@ -1,3 +1,6 @@
+//To understand the raft reference of official GO-RAFT has been taken but no part of the code has taken.
+//Link to the reference https://github.com/goraft/
+
 package raft
 
 import (
@@ -11,9 +14,8 @@ import (
 	//	"path/filepath"
 	"fmt"
 	"strconv"
-	"sync"
 )
-//Definig All Stat of the Raft
+//Defining All Stat of the Raft
 const (
 	Leader    = 1
 	Candidate = 2
@@ -21,8 +23,6 @@ const (
 )
 //Main Raft Class to manage all properties of a raft instanse
 type rafTclass struct {
-	 mutxState  sync.Mutex
-	mutxTerm  sync.Mutex
 	currentTerm            int
 	votedFor               int
 	totalvote              int
@@ -48,12 +48,12 @@ type raftConfig struct {
 	Timeouts []timeouts           `json:"Timeouts"`
 	LogFile  string               `json:"LogFile"`
 }
-//Main Raft Interface that is acceseble out side the package
+//Main Raft Interface that is accessible out side the package
 type Raft interface {
 	Term() int
 	IsLeader() bool
 }
-//Miscllenius Function of Raft
+//Miscellaneous Function of Raft
 func (r *rafTclass)Stop(){
 		r.started=false;
 	fmt.Println("Stoped")
@@ -74,7 +74,7 @@ func (r *rafTclass)Start(){
 	r.started=true;
 }
 
-//RAFT intializer
+//RAFT initializer
 func NewRaft(id int, path string) *Raft {
 	//Intialising Object Properties
 	var RaftObj rafTclass
@@ -94,7 +94,7 @@ func NewRaft(id int, path string) *Raft {
 			RaftObj.ElectionTimeout = alldetails.Timeouts[timeOu].ElctionTimeout
 		}
 	}
-	//Main Task Manager based in the satae task will be choosen here
+	//Main Task Manager based in the state task will be chosen here
 	go func() {
 		RaftObj.votedFor = 0
 		RaftObj.Start()
@@ -105,7 +105,7 @@ func NewRaft(id int, path string) *Raft {
 			if RaftObj.started{
 			switch RaftObj.currentState {
 
-			case Follower://If it is a Follwer then perform this
+			case Follower://If it is a Follower then perform this
 				RaftObj.performasFollower()
 			case Candidate://If it is a candidate then perform this
 				RaftObj.perfomeasCandidate()
@@ -124,7 +124,7 @@ func NewRaft(id int, path string) *Raft {
 }
 //Evaluate that is it ok to send vote if it is ok then return TRUE
 func (RaftObj *rafTclass) sendVote(req cluster.VoteReq) bool {
-	//If older request then currentterm then REFUSE
+	//If older request then current term then REFUSE
 	if req.Term <= RaftObj.currentTerm {
 		return false
 	}
@@ -133,13 +133,13 @@ func (RaftObj *rafTclass) sendVote(req cluster.VoteReq) bool {
 		//fmt.Println(strconv.Itoa(RaftObj.myID) + ":Already Voted")
 		return false
 	}
-	//else performe the operation like term change and vote for change and Accept
+	//else perform the operation like term change and vote for change and Accept
 	RaftObj.currentTerm = req.Term
 	RaftObj.votedFor = req.IdCandidate
 	RaftObj.LastComm = time.Now()
 	return true
 }
-//this is the work that Follower will performe
+//this is the work that Follower will perform
 func (RaftObj *rafTclass) performasFollower() {
 	if RaftObj.currentState == Follower {
 		RaftObj.totalvote = 0
@@ -193,23 +193,22 @@ func (RaftObj *rafTclass) perfomeasCandidate() {
 			switch msg.Msg.(type) {
 
 			case cluster.HeartBeat:
-				//If gets any info that anyone have higher term or older leader step back to the follwer
+				//If gets any info that anyone have higher term or older leader step back to the follower
 					if msg.Msg.(cluster.HeartBeat).Term > RaftObj.currentTerm || RaftObj.currentLeader == msg.Msg.(cluster.HeartBeat).LeaderId {
 					RaftObj.currentLeader = msg.Msg.(cluster.HeartBeat).LeaderId
 					RaftObj.currentTerm = msg.Msg.(cluster.HeartBeat).Term
-					//fmt.Println(strconv.Itoa(RaftObj.myID) + "-" + strconv.Itoa(RaftObj.currentTerm) + ":Downngrade to Follower")
 					RaftObj.currentState = Follower
 					fmt.Println(strconv.Itoa(RaftObj.myID) + " - " + strconv.Itoa(RaftObj.currentTerm) + " Candidate -> Follower")
 				}
 				RaftObj.LastComm = time.Now()
-				//If gets any voteReqThen it will remove refuse all to give vote beacuse it voted for himmself
+				//If gets any voteReqThen it will remove refuse all to give vote because it voted for himself
 			case cluster.VoteReq:
 				req := msg.Msg.(cluster.VoteReq)
 				RaftObj.servreEntity.Outbox() <- &cluster.Envelope{Pid: req.IdCandidate, MsgId: 90, Msg: cluster.VoteRespose{Term: msg.Msg.(cluster.VoteReq).Term, VoteResult: false}}
 
 			case cluster.VoteRespose:
 				res := msg.Msg.(cluster.VoteRespose)
-			//count Postive votes
+			//count Positive votes
 			if res.Term <= RaftObj.currentTerm && res.VoteResult {
 
 					RaftObj.totalvote++
