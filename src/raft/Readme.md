@@ -10,6 +10,11 @@ There is three different role that can be assigned to server
 * Leader
 * Candidate
 * Follower
+
+
+
+
+
 There can be at most one leader at a time. If there is majority number of server is not available then it does not guarantee of having leader.
 
 
