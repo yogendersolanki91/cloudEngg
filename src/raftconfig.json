@@ -16,10 +16,32 @@
     {"ID":3,"ElctionTimeout":490},
     {"ID":4,"ElctionTimeout":440},
     {"ID":5,"ElctionTimeout":270},
-    {"ID":6,"ElctionTimeout":270},
+    {"ID":6,"ElctionTimeout":570},
     {"ID":7,"ElctionTimeout":480},
     {"ID":8,"ElctionTimeout":690},
     {"ID":9,"ElctionTimeout":500},
     {"ID":10,"ElctionTimeout":630}
-],"LogFile":"logtest.log"
+],"LogFile":[
+    {"ID":1,"Filename":"logtest1.log"},
+    {"ID":2,"Filename":"logtest2.log"},
+    {"ID":3,"Filename":"logtest3.log"},
+    {"ID":4,"Filename":"logtest4.log"},
+    {"ID":5,"Filename":"logtest5.log"},
+    {"ID":6,"Filename":"logtest6.log"},
+    {"ID":7,"Filename":"logtest7.log"},
+    {"ID":8,"Filename":"logtest8.log"},
+    {"ID":9,"Filename":"logtest9.log"},
+    {"ID":10,"Filename":"logtest10.log"}
+],"TermFile":[
+      {"ID":1,"Filename":"term1.log"},
+      {"ID":2,"Filename":"term2.log"},
+      {"ID":3,"Filename":"term3.log"},
+      {"ID":4,"Filename":"term4.log"},
+      {"ID":5,"Filename":"term5.log"},
+      {"ID":6,"Filename":"term6.log"},
+      {"ID":7,"Filename":"term7.log"},
+      {"ID":8,"Filename":"term8.log"},
+      {"ID":9,"Filename":"term9.log"},
+      {"ID":10,"Filename":"term10.log"}
+]
 }
