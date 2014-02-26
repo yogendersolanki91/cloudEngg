@@ -9,7 +9,7 @@ It is implemented using Google Go language and ZeroMq.
 Current status of project
  * Key Value Store
  * Server Cluster
- * Raft Leader Election (in progress...)
+ * Raft Leader Election 
  * And many more..
 
 
