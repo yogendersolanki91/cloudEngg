@@ -30,9 +30,17 @@ There is four function that is accessible for the library users.
 * IsLeader() - This function will return true when a server is in the state of the Leader.
 * Term()- This Function will return the current term of the server. To know more about term see Raft paper.
 
-Two function additionally provided for Debugging the code.
+Additional Function
+---------------------
+Function to simulate the partitioned network behaviour.These function will not kill the process but cut off the communication.
+
 * Start()-It will start the server after killing the server with Stop().
 * Stop()- It will stop the all execution process of server and save the current term to disk and become a follower.
+
+Function to switch the log messages.
+
+* DebugOn() - It will show detailed log message while running that can be useful for debugging
+* DebugOff()- It will switch off log messages.
 
 
 
