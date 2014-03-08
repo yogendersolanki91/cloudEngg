@@ -42,7 +42,19 @@ Function to switch the log messages.
 * DebugOn() - It will show detailed log message while running that can be useful for debugging
 * DebugOff()- It will switch off log messages.
 
+Testing Instruction (only for test)
+--------------------
+Some changes that required while running test cases.
+* First the path of the config file and the RaftDummy.go file must be given while running test case on your system.RaftDummy.go is a file that start a dummy process and that can communicate with the test process.So the line No. 96 in raft_dummyprocess_test.go should contain path according to your system to run test successfully. 
+* Line No 96:raft_dummyProcess_test.go
 
+    ```sh
+cmd := exec.Command("go", "run", "path to RaftDummy.go", "-id", strconv.Itoa(key+1), "-dbgport", strconv.Itoa(dbg[key]))
+    ```
+* Line No 72:raftDummy.go
+    ```sh
+raftVal = *raft.NewRaft(*id, "path to config file")
+    ```
 
 License
 ----
