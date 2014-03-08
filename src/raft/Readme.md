@@ -49,11 +49,13 @@ Some changes that required while running test cases.
 * Line No 96:raft_dummyProcess_test.go
 
     ```sh
-cmd := exec.Command("go", "run", "path to RaftDummy.go", "-id", strconv.Itoa(key+1), "-dbgport", strconv.Itoa(dbg[key]))
+    cmd := exec.Command("go", "run", "path to RaftDummy.go", "-id", strconv.Itoa(key+1), 
+    "-dbgport", strconv.Itoa(dbg[key]))
     ```
 * Line No 72:raftDummy.go
+    
     ```sh
-raftVal = *raft.NewRaft(*id, "path to config file")
+        raftVal = *raft.NewRaft(*id, "path to config file")
     ```
 
 License
