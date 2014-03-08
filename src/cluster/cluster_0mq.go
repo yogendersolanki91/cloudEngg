@@ -78,7 +78,7 @@ type Allserver struct {
 }
 
 const (
-	BRODCAST = -1
+	BROADCAST = -1
 )
 
 //Structure of the envelope used to send msg
@@ -314,7 +314,7 @@ func New(id int, cofg string) ServerObj {
 				var msg Envelope
 				msg = *x
 
-				if msg.Pid != BRODCAST && msg.Pid != newServer.ID {
+				if msg.Pid != BROADCAST && msg.Pid != newServer.ID {
 
 					//print(msg.Pid)
 					//println(" sending ..")

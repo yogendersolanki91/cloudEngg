@@ -66,7 +66,6 @@ func connect() net.Listener {
 func handler(dataPOint *Server, litsn *net.Listener) {
 	for {
 		conn, err := litsn.Accept()
-
 		if err != nil {
 		}
 		rpc.ServeConn(conn)

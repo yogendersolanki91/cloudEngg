@@ -11,16 +11,16 @@
     {"ID":9,"Host":"localhost","Port":290009},
     {"ID":10,"Host":"localhost","Port":2900010}
 ],"Timeouts":[
-    {"ID":1,"ElctionTimeout":570},
-    {"ID":2,"ElctionTimeout":560},
-    {"ID":3,"ElctionTimeout":490},
-    {"ID":4,"ElctionTimeout":440},
-    {"ID":5,"ElctionTimeout":270},
-    {"ID":6,"ElctionTimeout":570},
-    {"ID":7,"ElctionTimeout":480},
-    {"ID":8,"ElctionTimeout":690},
-    {"ID":9,"ElctionTimeout":500},
-    {"ID":10,"ElctionTimeout":630}
+    {"ID":1,"ElectionTimeout":570},
+    {"ID":2,"ElectionTimeout":560},
+    {"ID":3,"ElectionTimeout":490},
+    {"ID":4,"ElectionTimeout":440},
+    {"ID":5,"ElectionTimeout":270},
+    {"ID":6,"ElectionTimeout":570},
+    {"ID":7,"ElectionTimeout":480},
+    {"ID":8,"ElectionTimeout":690},
+    {"ID":9,"ElectionTimeout":500},
+    {"ID":10,"ElectionTimeout":630}
 ],"LogFile":[
     {"ID":1,"Filename":"logtest1.log"},
     {"ID":2,"Filename":"logtest2.log"},
