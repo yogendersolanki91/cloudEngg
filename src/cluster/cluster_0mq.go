@@ -1,14 +1,13 @@
 package cluster
 
 import (
+	"bytes"
+	"encoding/gob"
 	"encoding/json"
 	zmq4 "github.com/pebbe/zmq4"
 	"io/ioutil"
 	"os"
 	"strconv"
-	"encoding/gob"
-	"bytes"
-
 )
 
 //some of the New Structure is beging added that should be used by all the server and every New struvutre should be defined here
@@ -32,9 +31,9 @@ type LogEntry struct {
 	LogCommand   LogValue
 }
 type LogValue struct {
-	Term int
-	Index int;
-	Operands  []byte
+	Term     int
+	Index    int
+	Operands []byte
 }
 
 //to store info written in JSon config File
@@ -152,8 +151,8 @@ func New(id int, cofg string) ServerObj {
 	newServer.Peers_o = mypeer
 
 	// initialising outbox inbox chalnal
-	newServer.In_chnl = make(chan *Envelope,20)
-	newServer.Out_chnl = make(chan *Envelope,20)
+	newServer.In_chnl = make(chan *Envelope, 20)
+	newServer.Out_chnl = make(chan *Envelope, 20)
 
 	//server itself start listnig at port defined in config file
 	bindConn := "tcp://*:" + strconv.Itoa(newServer.Port)
@@ -205,9 +204,9 @@ func New(id int, cofg string) ServerObj {
 				msg = *x
 
 				if msg.Pid != BROADCAST && msg.Pid != newServer.ID {
-					msg1:=wrapMsg2(Envelope{Pid: newServer.Pid(), MsgId: msg.MsgId, Msg: msg.Msg})
+					msg1 := wrapMsg2(Envelope{Pid: newServer.Pid(), MsgId: msg.MsgId, Msg: msg.Msg})
 					newServer.peer_conn[msg.Pid].Send(msg1, 0)
-				}else if msg.Pid == BROADCAST {
+				} else if msg.Pid == BROADCAST {
 					//log.Println("Broadcasting",msg.Msg)
 					for _, sockpeer := range newServer.peer_conn {
 
@@ -233,7 +232,7 @@ func wrapMsg2(msg Envelope) string {
 	mCache := new(bytes.Buffer)
 	encCache := gob.NewEncoder(mCache)
 	encCache.Encode(msg)
-	send:= string(mCache.Bytes())
+	send := string(mCache.Bytes())
 	//log.Println("SND",mCache.Bytes())
 	return send
 }
