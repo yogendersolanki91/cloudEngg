@@ -10,7 +10,7 @@ Current status of project
  * Key Value Store
  * Server Cluster
  * Raft Leader Election 
- * And many more..
+ * Raft Log Replication
 
 
 
@@ -24,7 +24,8 @@ Features
 
 Improved
 ----
-
+ 
+ * XML encoder replcaed with GOB
  * Bug in the broadcast msg .Bug Recovered.
  * Bug in the msg Pid has been recovered.
 
