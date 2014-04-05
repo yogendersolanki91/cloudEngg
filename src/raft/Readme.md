@@ -70,10 +70,10 @@ Some changes that required while running test cases.
     ```
 
 * To test the package in correct way you must use this command
-```sh
+    ```sh
     go test -v -run=^TestCrashFollower$ raft //for testing the case when a server crashed and recover
     go test -v -run=^TestBasicLogReplication$ raft //for testing case the when everything running correctly
-```
+    ```
 Don't use "go test raft" directly to test all case at once
 You must change line no 100,136,146 to make test run your system must replace these line with absolute path executable of RaftDummy
 
