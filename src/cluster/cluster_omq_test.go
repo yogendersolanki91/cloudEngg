@@ -26,7 +26,7 @@ var brdsnd = 0
 var totalbrodcastmsg = 100
 
 func TestServerSendRcvBrodcast(t *testing.T) {
-	cofigpath, _ := filepath.Abs("/home/blackh/IdeaProjects/untitled/src/raftconfig.json")
+	cofigpath, _ := filepath.Abs("../raftconfig.json")
 	var allserver [11]ServerObj
 	for i := 1; i <= 10; i++ {
 		allserver[i] = New(i, cofigpath)

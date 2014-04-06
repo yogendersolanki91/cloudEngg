@@ -12,23 +12,34 @@ There is three different role that can be assigned to server
 * Follower
 
 
-
-
-
 There can be at most one leader at a time. If there is majority number of server is not available then it does not guarantee of having leader.
 
 
 How to use
 --------------
 To use the Raft you have to write just one line of code
+* To initialize
+
 ```sh
     rafter = *NewRaft(ID, "PATH TO CONFIG FILE")
+
 ```
+* Whenever a new request came just encode that with GOB and pass encoded byte array to
+
+```sh
+    rafter.Inbox()<-[]byte
+
+```
+* If rafter.Outbox() receive any entry meant that has been replicated and client must commit operation that is given in the LogValue must be performed
 please take care of the " * " that is use near "NewRaft".
 
 There is four function that is accessible for the library users.
+
 * IsLeader() - This function will return true when a server is in the state of the Leader.
+
 * Term()- This Function will return the current term of the server. To know more about term see Raft paper.
+
+Example is given in the file named RaftDummy.go.
 
 Additional Function
 ---------------------
@@ -57,6 +68,14 @@ Some changes that required while running test cases.
     ```sh
         raftVal = *raft.NewRaft(*id, "path to config file")
     ```
+
+* To test the package in correct way you must use this command
+```sh
+    go test -v -run=^TestCrashFollower$ raft //for testing the case when a server crashed and recover
+    go test -v -run=^TestBasicLogReplication$ raft //for testing case the when everything running correctly
+```
+Don't use "go test raft" directly to test all case at once
+You must change line no 100,136,146 to make test run your system must replace these line with absolute path executable of RaftDummy
 
 License
 ----

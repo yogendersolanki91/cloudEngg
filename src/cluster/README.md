@@ -75,7 +75,7 @@ newserv=cluster.New(2,"absolute path to config file")
 
 Improved
 ----
-
+* XML marshaling replaced with GOB encoder because of message drops
 * Data of any type can be send by the chanel.Bug removed.
 * Bug in the broadcast msg .Bug Recovered.
 * Bug in the msg Pid has been recovered.

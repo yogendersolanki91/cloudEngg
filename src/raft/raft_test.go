@@ -1,85 +1,195 @@
 package raft
 
 import (
-	"log"
+	"net/rpc"
 	"testing"
+	//"os/exec"
+	"log"
+	"os/exec"
+	"strconv"
 	"time"
-	//"strconv"
-	//"fmt"
+	"reflect"
+	"github.com/syndtr/goleveldb/leveldb"
+	"github.com/syndtr/goleveldb/leveldb/iterator"
 )
 
-func TestLEADERELCETION(t *testing.T) {
-	all := make(map[int]Raft)
-	//Initialize all of the Raft Objects Creating total 10 objects
-	for i := 1; i < 11; i++ {
-		all[i] = *NewRaft(i, "../raftconfig.json")
+func checkleaders(count *int, index *int) {
+	var res bool
+	for i := 0; i < totalClient; i++ {
+		if !killed[i] {
+
+			if isLeader(dbg[i], &res) {
+				//fmt.Println(dbg[i])
+				*index = i
+				*count++
+			}
+		}
 	}
-	time.Sleep(1 * time.Second)
-	//Counting total leaders
-	leaderCount := 0
-	leaderindex := 0
-	for i := 1; i < 11; i++ {
-		if all[i].IsLeader() {
-			leaderCount += 1
-			leaderindex = i
+}
+
+const (
+	totalClient = 5
+)
+
+func isLeader(port int, res *bool) bool {
+	client, err := rpc.Dial("tcp", "localhost:"+strconv.Itoa(port))
+	var pair bool
+	var result bool
+	result = true
+	if err == nil {
+		err2 := client.Call("Comm.IsLeaderRPC", pair, &result)
+		if err2 == nil {
+			res = &result
+		} else {
+			log.Panic(err2)
+		}
+	} else {
+		log.Panic(err)
+	}
+	client.Close()
+
+	return result
+}
+func Term(port int, res *int) int {
+	var pair bool
+	*res = 3
+	client, err := rpc.Dial("tcp", "localhost:"+strconv.Itoa(port))
+	if err != nil {
+		log.Panic(err)
+	}
+	er2 := client.Call("Comm.GetTermRPC", pair, res)
+	if er2 != nil {
+		log.Panic(er2)
+	}
+	client.Close()
+	log.Println(*res)
+	return *res
+}
+func Kill(port int) {
+	client, err := rpc.Dial("tcp", "localhost:"+strconv.Itoa(port))
+	pair := true
+	var res int
+	if err != nil {
+
+		log.Panic(err)
+	}
+	er2 := client.Call("Comm.KillRPC", pair, &res)
+	if er2 != nil {
+		log.Panic(er2)
+	}
+	client.Close()
+}
+
+var res bool
+var leaderPort int
+var leaderCount int
+var killed [5]bool
+var dbg [5]int
+
+func TestBasicLogReplication(t *testing.T) {
+	baseDbgPort := 1910
+	//var dbg [totalClient]int{19910, 19911, 19912, 19913, 19914, 19915, 19916, 19917, 19918, 19919}
+	log.Println("Starting total 5 server as given in the config file...")
+	for f := 0; f < totalClient; f++ {
+		killed[f] = false
+		dbg[f] = baseDbgPort + f
+	}
+	//var s int;
+	res = true
+	for key, _ := range dbg {
+
+		cmd := exec.Command("C:\\CloudSrc\\src\\RaftDummy.exe", "-id", strconv.Itoa(key+1), "-dbgport", strconv.Itoa(dbg[key]))
+		cmd.Start()
+		log.Println("Server ",key,"Started")
+
+	}
+	time.Sleep(15*time.Second)
+	//Basic Test-Alsmost One leader at a time
+
+	log.Println("All server started.Running Basic Replication")
+	for _, value := range dbg {
+		log.Println("Killed",value)
+		Kill(value)
+	}
+	time.Sleep(10*time.Second)
+	if !check(totalClient){
+		t.Error("not passed unmached entry found")
+	}
+	time.Sleep(5*time.Second)
+	//log.Println("Running minority failure test")
+	//MinorityFailure(t)
+	//log.Println("Running Majority failure test")
+	//MajorityFailure(t)
+
+}
+func TestCrashFollower(t *testing.T){
+	baseDbgPort := 1910
+	//var dbg [totalClient]int{19910, 19911, 19912, 19913, 19914, 19915, 19916, 19917, 19918, 19919}
+	log.Println("Starting total 5 server as given in the config file...")
+	for f := 0; f < totalClient; f++ {
+		killed[f] = false
+		dbg[f] = baseDbgPort + f
+	}
+	//var s int;
+	res = true
+	for key, _ := range dbg {
+		cmd := exec.Command("C:\\CloudSrc\\src\\RaftDummy.exe", "-id", strconv.Itoa(key+1), "-dbgport", strconv.Itoa(dbg[key]))
+		cmd.Start()
+		log.Println("Server ",key,"Started")
+
+	}
+	time.Sleep(5*time.Second)
+	log.Println("Kiling 4")
+ 	Kill(dbg[3])
+	time.Sleep(time.Second*5)
+	log.Println("Now legged server started..")
+	cmd := exec.Command("C:\\CloudSrc\\src\\RaftDummy.exe", "-id", strconv.Itoa(4), "-dbgport", strconv.Itoa(dbg[3]))
+	cmd.Start()
+	time.Sleep(25*time.Second)
+	for	_, value := range dbg {
+		log.Println("Killed",value)
+		Kill(value)
+	}
+	time.Sleep(5*time.Second)
+	if !check(totalClient){
+		t.Error("not passed")
+	}
+}
+
+func check (count int)bool{
+	var allDB [6]*leveldb.DB
+	var allDBMAP [6]map[string]string
+	var allIterator [6]iterator.Iterator
+	for i:=1;i<=count;i++{
+		allDBMAP[i]=make(map[string]string)
+		allD,err:=leveldb.OpenFile("db_"+strconv.Itoa(i)+".db",nil)
+		if err!=nil{
+			panic(err)
+		}else{
+			allDB[i]=allD
+			allIterator[i]=allD.NewIterator(nil,nil)
+		}
+	}
+
+
+
+	for k:=1;k<=count ;k++{
+		for allIterator[k].Next() {
+
+			allDBMAP[k][string(allIterator[k].Key())]=string(allIterator[k].Value())
+
 		}
 
 	}
-	//if total leader is one then it is ok becasuse there can be atmost one leader
-	if leaderCount == 1 {
-		log.Println("Only One Leader Found Its ")
-	} else {
-		log.Panic("No Lader Found or moer then one leader found")
-	}
-	//Kill 3 Servers that is not leader
-	kill := 0
-	//Three Follower has been stopped
-	for i := 1; i < 11; i++ {
-		if !all[i].IsLeader() {
-			all[i].Stop()
-			kill++
-		}
-		if kill >= 3 {
-			break
+	for k:=1;k<count;k++{
+		if reflect.DeepEqual(allDBMAP[k],allDBMAP[k+1]){
+			log.Println(reflect.DeepEqual(allDBMAP[k],allDBMAP[k+1]),k)
+		}else{
+			return false
 		}
 	}
-	//and also kill one leader and now total running servers are 6
-	all[leaderindex].Stop()
-	time.Sleep(2 * time.Second)
-	//Count Again How many leaders are there
-	leaderCount = 0
-	for i := 1; i < 11; i++ {
-		if all[i].IsLeader() {
-			leaderCount += 1
-			log.Println(i)
-			leaderindex = i
-		}
+	return true
+	
 
-	}
-	//if there is only one leader then its ok
-	if leaderCount == 1 {
-		log.Println("Only One Leader Found Minority Failure  ")
-	} else {
-		log.Panic("Leader Found More then One or None Fail")
-	}
-	//Now stop leader also that will lead to 5 server cluster and that is Majority Failure
-	all[leaderindex].Stop()
-	time.Sleep(2 * time.Second)
-	//Now count all leader
-	leaderCount = 0
-	for i := 1; i < 11; i++ {
-		if all[i].IsLeader() {
-			leaderCount += 1
-			log.Println(i)
-			leaderindex = i
-		}
-
-	}
-	//Here we should not have any leader because minority cant choose leader
-	if leaderCount == 0 {
-		log.Println("No Lader Found in Majority Failure as it should not be")
-	} else {
-		log.Panic("Something is wrong how can we get a leder in majority failure")
-	}
 
 }

@@ -2,55 +2,39 @@ package cluster
 
 import (
 	"encoding/json"
-	"encoding/xml"
-	//	"fmt"
 	zmq4 "github.com/pebbe/zmq4"
 	"io/ioutil"
 	"os"
 	"strconv"
-	"strings"
-	//"image/gif"
+	"encoding/gob"
+	"bytes"
+
 )
 
 //some of the New Structure is beging added that should be used by all the server and every New struvutre should be defined here
+
 type VoteReq struct {
-	Term        int
-	IdCandidate int
+	Term         int
+	IdCandidate  int
+	LastlogIndex int
+	LastTerm     int
 }
 type VoteRespose struct {
 	Term       int
 	VoteResult bool
 }
-type HeartBeat struct {
-	Term     int
-	LeaderId int
+type LogEntry struct {
+	CommitIndex  int
+	Term         int
+	LeaderId     int
+	PrevLogindex int
+	PrevLogTerm  int
+	LogCommand   LogValue
 }
-
-//dECLARING how would look like final msg so that it can be decoded and encoded propery
-type sendVoteReq struct {
-	Pid   int
-	MsgId int
-	Msg   VoteReq
-}
-type sendString struct {
-	Pid   int
-	MsgId int
-	Msg   string
-}
-type sendint struct {
-	Pid   int
-	MsgId int
-	Msg   int
-}
-type sendVoteRespons struct {
-	Pid   int
-	MsgId int
-	Msg   VoteRespose
-}
-type sendHeartBeat struct {
-	Pid   int
-	MsgId int
-	Msg   HeartBeat
+type LogValue struct {
+	Term int
+	Index int;
+	Operands  []byte
 }
 
 //to store info written in JSon config File
@@ -87,16 +71,13 @@ type Envelope struct {
 	MsgId int
 	Msg   interface{}
 }
-
-/*func (b Envelope) String() string {
-
-	return fmt.Sprintf("%b", b)
+type AppendResponse struct {
+	Result        bool
+	RefrenceMsgID int
+	Reason        int
+	ExpectedEntry int
 }
-func (b Envelope) OtherString() string {
 
-	return fmt.Sprintf("%b", b.Msg)
-}
-*/
 //basic Function that will be accessed by the server object
 type Server interface {
 	Pid() int
@@ -142,97 +123,6 @@ func getAllserver(cofg string) Allserver {
 	return jsontype
 }
 
-// to send the envelope over the network we need string this will provide formatted string fro json encoding ans decoding of the message
-var sendINT, rCVINT sendint
-var sndHB, rCBHB sendHeartBeat
-var sendVOteRes, rCVTRS sendVoteRespons
-var sendthis, rCVVTREQ sendVoteReq
-var sendStrings, rCVSTR sendString
-
-func wrapMsg(msg Envelope) string {
-
-	var send string
-	switch msg.Msg.(type) {
-	case HeartBeat:
-		sndHB.Msg = msg.Msg.(HeartBeat)
-		sndHB.MsgId = msg.MsgId
-		sndHB.Pid = msg.Pid
-		x, _ := xml.Marshal(sndHB)
-		send = string(x)
-		return send
-	case VoteRespose:
-		sendVOteRes.Msg = msg.Msg.(VoteRespose)
-		sendVOteRes.MsgId = msg.MsgId
-		sendVOteRes.Pid = msg.Pid
-		x, _ := xml.Marshal(sendVOteRes)
-		send = string(x)
-		return send
-	case VoteReq:
-		sendthis.Msg = msg.Msg.(VoteReq)
-		sendthis.MsgId = msg.MsgId
-		sendthis.Pid = msg.Pid
-		x, _ := xml.Marshal(sendthis)
-		send = string(x)
-		return send
-	case string:
-		sendStrings.Msg = msg.Msg.(string)
-		sendStrings.MsgId = msg.MsgId
-		sendStrings.Pid = msg.Pid
-		x, _ := xml.Marshal(sendStrings)
-		send = string(x)
-		return send
-	case int:
-
-		sendINT.Msg = msg.Msg.(int)
-		sendINT.MsgId = msg.MsgId
-		sendINT.Pid = msg.Pid
-		x, _ := xml.Marshal(sendINT)
-		send = string(x)
-		return send
-
-	}
-	return send
-}
-
-// this will decode msg back to Envelope structure from the json encode msg
-func unwrapMs(msg string) Envelope {
-	var returnEnvelp Envelope
-	binmsg := []byte(msg)
-	switch {
-	case strings.Contains(msg, "<sendVoteRespons>"):
-		xml.Unmarshal(binmsg, &rCVTRS)
-		returnEnvelp.MsgId = rCVTRS.MsgId
-		returnEnvelp.Pid = rCVTRS.Pid
-		returnEnvelp.Msg = rCVTRS.Msg
-		return returnEnvelp
-	case strings.Contains(msg, "<sendint>"):
-		xml.Unmarshal(binmsg, &rCVINT)
-		returnEnvelp.MsgId = rCVINT.MsgId
-		returnEnvelp.Pid = rCVINT.Pid
-		returnEnvelp.Msg = rCVINT.Msg
-	case strings.Contains(msg, "<sendHeartBeat>"):
-		xml.Unmarshal(binmsg, &rCBHB)
-		returnEnvelp.MsgId = rCBHB.MsgId
-		returnEnvelp.Pid = rCBHB.Pid
-		returnEnvelp.Msg = rCBHB.Msg
-		return returnEnvelp
-	case strings.Contains(msg, "<sendVoteReq>"):
-		xml.Unmarshal(binmsg, &rCVVTREQ)
-		returnEnvelp.MsgId = rCVVTREQ.MsgId
-		returnEnvelp.Pid = rCVVTREQ.Pid
-		returnEnvelp.Msg = rCVVTREQ.Msg
-		return returnEnvelp
-	case strings.Contains(msg, "<sendString>"):
-		xml.Unmarshal(binmsg, &rCVSTR)
-		returnEnvelp.MsgId = rCVSTR.MsgId
-		returnEnvelp.Pid = rCVSTR.Pid
-		returnEnvelp.Msg = rCVSTR.Msg
-		return returnEnvelp
-	}
-	return returnEnvelp
-
-}
-
 //here is the all stuff that required to create a server object
 func New(id int, cofg string) ServerObj {
 	//Registering All Structure that we will use
@@ -262,8 +152,8 @@ func New(id int, cofg string) ServerObj {
 	newServer.Peers_o = mypeer
 
 	// initialising outbox inbox chalnal
-	newServer.In_chnl = make(chan *Envelope)
-	newServer.Out_chnl = make(chan *Envelope)
+	newServer.In_chnl = make(chan *Envelope,20)
+	newServer.Out_chnl = make(chan *Envelope,20)
 
 	//server itself start listnig at port defined in config file
 	bindConn := "tcp://*:" + strconv.Itoa(newServer.Port)
@@ -289,18 +179,17 @@ func New(id int, cofg string) ServerObj {
 	//go routing to use receive msg from peer
 	go func() {
 		for {
-
 			rcvmsg, er := myconn.Recv(0)
-
 			if er != nil {
 				panic(er)
 			}
-
 			var msg Envelope
-			msg = unwrapMs(rcvmsg)
-
+			msg = unwrapMs2(rcvmsg)
+			//if msg.MsgId>0{
+			//log.Println("reciver--msgid",msg.MsgId,rcvmsg)}
 			//print("aaya ")
 			//println(newServer.ID)
+
 			newServer.Inbox() <- &msg
 
 		}
@@ -308,6 +197,7 @@ func New(id int, cofg string) ServerObj {
 
 	//go routine to send data that is coming over out chanel
 	go func() {
+
 		for {
 			select {
 			case x := <-newServer.Out_chnl:
@@ -315,13 +205,13 @@ func New(id int, cofg string) ServerObj {
 				msg = *x
 
 				if msg.Pid != BROADCAST && msg.Pid != newServer.ID {
-
-					//print(msg.Pid)
-					//println(" sending ..")
-					newServer.peer_conn[msg.Pid].Send(wrapMsg(Envelope{Pid: newServer.Pid(), MsgId: msg.MsgId, Msg: msg.Msg}), 0)
-				} else {
+					msg1:=wrapMsg2(Envelope{Pid: newServer.Pid(), MsgId: msg.MsgId, Msg: msg.Msg})
+					newServer.peer_conn[msg.Pid].Send(msg1, 0)
+				}else if msg.Pid == BROADCAST {
+					//log.Println("Broadcasting",msg.Msg)
 					for _, sockpeer := range newServer.peer_conn {
-						sockpeer.Send(wrapMsg(Envelope{Pid: newServer.Pid(), MsgId: msg.MsgId, Msg: msg.Msg}), 0)
+
+						sockpeer.Send(wrapMsg2(Envelope{Pid: newServer.Pid(), MsgId: msg.MsgId, Msg: msg.Msg}), 0)
 					}
 
 				}
@@ -332,4 +222,36 @@ func New(id int, cofg string) ServerObj {
 	}()
 	//now returning this Serverobj
 	return newServer
+}
+
+func wrapMsg2(msg Envelope) string {
+	gob.Register(LogEntry{})
+	gob.Register(VoteRespose{})
+	gob.Register(VoteReq{})
+	gob.Register(AppendResponse{})
+	gob.Register(Envelope{})
+	mCache := new(bytes.Buffer)
+	encCache := gob.NewEncoder(mCache)
+	encCache.Encode(msg)
+	send:= string(mCache.Bytes())
+	//log.Println("SND",mCache.Bytes())
+	return send
+}
+
+// this will decode msg back to Envelope structure from the json encode msg
+func unwrapMs2(msg string) Envelope {
+	var returnEnvelp Envelope
+	gob.Register(LogEntry{})
+	gob.Register(VoteRespose{})
+	gob.Register(VoteReq{})
+	gob.Register(AppendResponse{})
+	gob.Register(Envelope{})
+	mCache := new(bytes.Buffer)
+	mCache.Write([]byte(msg))
+	//log.Println("RCV",mCache.Bytes())
+	decCache := gob.NewDecoder(mCache)
+	decCache.Decode(&returnEnvelp)
+	//log.Println(returnEnvelp)
+	return returnEnvelp
+
 }

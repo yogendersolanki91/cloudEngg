@@ -1,47 +1,27 @@
 {
 "Servers":[
-    {"ID":1,"Host":"localhost","Port":290001},
-    {"ID":2,"Host":"localhost","Port":290002},
-    {"ID":3,"Host":"localhost","Port":290003},
-    {"ID":4,"Host":"localhost","Port":290004},
-    {"ID":5,"Host":"localhost","Port":290005},
-    {"ID":6,"Host":"localhost","Port":290006},
-    {"ID":7,"Host":"localhost","Port":290007},
-    {"ID":8,"Host":"localhost","Port":290008},
-    {"ID":9,"Host":"localhost","Port":290009},
-    {"ID":10,"Host":"localhost","Port":2900010}
+    {"ID":1,"Host":"localhost","Port":22901},
+    {"ID":2,"Host":"localhost","Port":22902},
+    {"ID":3,"Host":"localhost","Port":22903},
+    {"ID":4,"Host":"localhost","Port":22904},
+    {"ID":5,"Host":"localhost","Port":22905}
 ],"Timeouts":[
-    {"ID":1,"ElectionTimeout":570},
-    {"ID":2,"ElectionTimeout":560},
-    {"ID":3,"ElectionTimeout":490},
-    {"ID":4,"ElectionTimeout":440},
-    {"ID":5,"ElectionTimeout":270},
-    {"ID":6,"ElectionTimeout":570},
-    {"ID":7,"ElectionTimeout":480},
-    {"ID":8,"ElectionTimeout":690},
-    {"ID":9,"ElectionTimeout":500},
-    {"ID":10,"ElectionTimeout":630}
+    {"ID":1,"ElectionTimeout":780},
+    {"ID":2,"ElectionTimeout":1260},
+    {"ID":3,"ElectionTimeout":1490},
+    {"ID":4,"ElectionTimeout":1040},
+    {"ID":5,"ElectionTimeout":270}
 ],"LogFile":[
     {"ID":1,"Filename":"logtest1.log"},
     {"ID":2,"Filename":"logtest2.log"},
     {"ID":3,"Filename":"logtest3.log"},
     {"ID":4,"Filename":"logtest4.log"},
-    {"ID":5,"Filename":"logtest5.log"},
-    {"ID":6,"Filename":"logtest6.log"},
-    {"ID":7,"Filename":"logtest7.log"},
-    {"ID":8,"Filename":"logtest8.log"},
-    {"ID":9,"Filename":"logtest9.log"},
-    {"ID":10,"Filename":"logtest10.log"}
+    {"ID":5,"Filename":"logtest5.log"}
 ],"TermFile":[
       {"ID":1,"Filename":"term1.log"},
       {"ID":2,"Filename":"term2.log"},
       {"ID":3,"Filename":"term3.log"},
       {"ID":4,"Filename":"term4.log"},
-      {"ID":5,"Filename":"term5.log"},
-      {"ID":6,"Filename":"term6.log"},
-      {"ID":7,"Filename":"term7.log"},
-      {"ID":8,"Filename":"term8.log"},
-      {"ID":9,"Filename":"term9.log"},
-      {"ID":10,"Filename":"term10.log"}
+      {"ID":5,"Filename":"term5.log"}
 ]
 }
